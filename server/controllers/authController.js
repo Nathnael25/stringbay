@@ -1,29 +1,24 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
-const generateToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
-};
+const generateToken = require("../utils/generateToken");
 
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser)
-      return res.status(400).json({ message: "Email already exists" });
-
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+      return res.status(400).json({ message: "Email already registered" });
 
     const newUser = new User({
       fullName,
-      email,
-      password: hashedPassword,
+      email: normalizedEmail,
+      password,
       role,
     });
+    await newUser.save();
 
     const token = generateToken(newUser);
 
@@ -37,8 +32,8 @@ exports.register = async (req, res) => {
         role: newUser.role,
       },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error("Register error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -46,18 +41,14 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const user = await User.findOne({ email });
-    if (!user) {
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user || !(await user.matchPassword(password))) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    const token = generatedToken(user);
+    const token = generateToken(user);
 
     res.status(200).json({
       message: "Login successful",
@@ -69,7 +60,8 @@ exports.login = async (req, res) => {
         role: user.role,
       },
     });
-  } catch (error) {
+  } catch (err) {
+    console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
