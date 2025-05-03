@@ -7,7 +7,7 @@ router.post("/login", login);
 
 router.get("/me", protect, (req, res) => {
   res.json({
-    messageg: "welcome to the route",
+    message: "welcome to the route",
     user: req.user,
   });
 });
