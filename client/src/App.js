@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SellerDashboard from "./pages/SellerDashboard";
 import ShopListPage from "./pages/ShopListPage";
+<Route path="/shops/:id" element={<ShopDetailPage />} />;
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
             }
           />
           <Route path="/shops" element={<ShopListPage />} />
+          <Route path="/shops/:id" element={<ShopDetailPage />} />
           <Route path="/" element={<h1>Home Page</h1>} />
         </Routes>
       </Router>
