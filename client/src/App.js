@@ -1,14 +1,14 @@
-import React from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SellerDashboard from "./pages/SellerDashboard";
 import ShopListPage from "./pages/ShopListPage";
+import ShopDetailPage from "./pages/ShopDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import AddInstrumentPage from "./pages/AddInstrumentPage";
 <Route path="/shops/:id" element={<ShopDetailPage />} />;
-import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (

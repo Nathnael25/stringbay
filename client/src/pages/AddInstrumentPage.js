@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../services/axios";
+import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -22,14 +22,14 @@ const AddInstrumentPage = () => {
   useEffect(() => {
     const fetchShops = async () => {
       try {
-        const res = await axios.get("/api/shops");
+        const res = await api.get("/api/shops");
         const owned = res.data.filter((shop) => shop.owner._id === user._id);
         setShops(owned);
       } catch (err) {
         console.error(err);
       }
     };
-    fetshShops();
+    fetchShops();
   }, [user._id]);
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -39,7 +39,7 @@ const AddInstrumentPage = () => {
     setError("");
 
     try {
-      await axios.post("/api/instruments", {
+      await api.post("/api/instruments", {
         ...form,
         price: parseFloat(form.price),
       });
@@ -108,3 +108,5 @@ const AddInstrumentPage = () => {
     </div>
   );
 };
+
+export default AddInstrumentPage;
