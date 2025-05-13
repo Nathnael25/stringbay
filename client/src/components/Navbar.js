@@ -28,7 +28,7 @@ const Navbar = () => {
         </>
       ) : (
         <>
-          <Link to="/login" style={{ marginLeft: "1rem" }}>
+          <Link to="/LoginOrRegisterPage" style={{ marginLeft: "1rem" }}>
             Login
           </Link>
           <Link to="/register" style={{ marginLeft: "1rem" }}>

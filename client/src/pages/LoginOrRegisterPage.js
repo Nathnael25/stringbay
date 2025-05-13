@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Eye, EyeOff, User, Lock, AlertTriangle } from "lucide-react";
 
-const LoginPage = () => {
+const LoginOrRegisterPage = () => {
   const [tab, setTab] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,8 +11,15 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [regFullName, setRegFullName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regRole, setRegRole] = useState("buyer");
+  const [regError, setRegError] = useState("");
+  const [regLoading, setRegLoading] = useState(false);
+
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,6 +37,30 @@ const LoginPage = () => {
       setError(err.message || "Failed to sign in");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (!regFullName || !regEmail || !regPassword || !regRole) {
+      setRegError("All fields are required");
+      return;
+    }
+
+    try {
+      setRegError("");
+      setRegLoading(true);
+      await register(
+        regFullName, // → maps to fullName
+        regEmail, // → maps to email
+        regPassword, // → maps to password
+        regRole // → maps to role
+      );
+      navigate("/");
+    } catch (err) {
+      setRegError(err.message || "Registration failed");
+    } finally {
+      setRegLoading(false);
     }
   };
 
@@ -166,27 +197,48 @@ const LoginPage = () => {
             <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800">
               Register
             </h2>
-            <form className="space-y-4">
+            {regError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center text-red-600">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                <span>{regError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleRegister} className="space-y-4">
               <input
                 type="text"
                 placeholder="Full Name"
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
-              <input
-                type="text"
-                placeholder="Username"
+                value={regFullName}
+                onChange={(e) => setRegFullName(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
               />
               <input
                 type="email"
                 placeholder="Email"
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
               />
               <input
                 type="password"
                 placeholder="Password"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md"
               />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role
+                </label>
+                <select
+                  value={regRole}
+                  onChange={(e) => setRegRole(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="buyer">Buyer</option>
+                  <option value="seller">Seller</option>
+                </select>
+              </div>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -199,9 +251,12 @@ const LoginPage = () => {
               </div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md"
+                disabled={regLoading}
+                className={`w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md ${
+                  regLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
-                Sign Up
+                {regLoading ? "Signing up..." : "Sign Up"}
               </button>
             </form>
           </>
@@ -211,4 +266,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginOrRegisterPage;

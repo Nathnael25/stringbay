@@ -6,6 +6,11 @@ const generateToken = require("../utils/generateToken");
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
+
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const normalizedEmail = email.toLowerCase().trim();
 
     const existingUser = await User.findOne({ email: normalizedEmail });
