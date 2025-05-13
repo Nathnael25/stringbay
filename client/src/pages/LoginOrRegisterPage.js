@@ -50,12 +50,7 @@ const LoginOrRegisterPage = () => {
     try {
       setRegError("");
       setRegLoading(true);
-      await register(
-        regFullName, // → maps to fullName
-        regEmail, // → maps to email
-        regPassword, // → maps to password
-        regRole // → maps to role
-      );
+      await register(regFullName, regEmail, regPassword, regRole);
       navigate("/");
     } catch (err) {
       setRegError(err.message || "Registration failed");
