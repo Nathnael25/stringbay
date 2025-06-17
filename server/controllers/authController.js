@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
+const Shop = require("../models/Shop");
+
 
 exports.register = async (req, res) => {
   try {
@@ -26,6 +28,16 @@ exports.register = async (req, res) => {
     await newUser.save();
 
     const token = generateToken(newUser);
+    let createdShop = null;
+    
+    if (role === "seller") {
+      createdShop = await Shop.create({
+        name: `${fullName}'s Shop`,
+        description: "My instrument store",
+        location: "TBD",
+        owner: newUser._id,
+      });
+    }
 
     res.status(201).json({
       message: "Registration successful",
@@ -36,7 +48,13 @@ exports.register = async (req, res) => {
         email: newUser.email,
         role: newUser.role,
       },
+      shop: createdShop ? {
+        id: createdShop._id,
+        name: createdShop.name,
+        owner: createdShop.owner,
+      } : null,
     });
+
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ message: "Server error" });
