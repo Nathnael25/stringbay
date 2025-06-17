@@ -24,7 +24,7 @@ const LoginOrRegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("All fields are required");
+      setError("All the fields are required");
       return;
     }
 
@@ -32,7 +32,13 @@ const LoginOrRegisterPage = () => {
       setError("");
       setLoading(true);
       await login(email, password);
-      navigate("/");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user?.role === "seller") {
+        navigate("/dashboard");
+      } else {
+        navigate("/shops");
+      }
     } catch (err) {
       setError(err.message || "Failed to sign in");
     } finally {
@@ -51,7 +57,13 @@ const LoginOrRegisterPage = () => {
       setRegError("");
       setRegLoading(true);
       await register(regFullName, regEmail, regPassword, regRole);
-      navigate("/");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user?.role === "seller") {
+        navigate("/dashboard");
+      } else {
+        navigate("/shops");
+      }
     } catch (err) {
       setRegError(err.message || "Registration failed");
     } finally {

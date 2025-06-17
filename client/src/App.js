@@ -1,7 +1,10 @@
 import ProtectedRoute from "./components/ProtectedRoute";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import NotFoundPage from "./pages/NotFoundPage";
+
 import LoginOrRegisterPage from "./pages/LoginOrRegisterPage";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
 import SellerDashboard from "./pages/SellerDashboard";
 import ShopListPage from "./pages/ShopListPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
@@ -15,6 +18,8 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/LoginOrRegister" element={<LoginOrRegisterPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
           <Route
             path="/dashboard"
             element={
@@ -23,8 +28,19 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/shops" element={<ShopListPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+
+          <Route
+            path="/shops"
+            element={
+              <ProtectedRoute allowedRoles={["buyer", "seller"]}>
+                <ShopListPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/shops/:id" element={<ShopDetailPage />} />
+
           <Route
             path="/instruments/new"
             element={
@@ -33,6 +49,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -41,6 +58,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/unauthorized" element={<h1>Unauthorized Access</h1>} />
           <Route path="/" element={<h1>Home Page</h1>} />
         </Routes>
       </Router>

@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
   };
 
   const register = async (fullName, email, password, role) => {
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", res.data.token);
       setToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
     } catch (err) {
       console.error("Registration error:", err.response?.data || err.message);
     }
@@ -71,6 +73,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     setToken(null);
     setUser(null);
   };
